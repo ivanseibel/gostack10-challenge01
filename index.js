@@ -1,24 +1,29 @@
 const express = require('express');
-
 const server = express();
 server.use(express.json());
 
-var projects = [
-  {
-    id: "1",
-    title: "Project Beta",
-    tasks: ["Some task"]
-  },
-  {
-    id: "2",
-    title: "Project Alpha",
-    tasks: ["Task 1", "Task 2"]
-  }
-];
+const projects = [];
 
+function checkIfProjectExists(req, res, next) {
+  const { id } = req.params;
+  const project = projects.find((project) => project.id == id);
+
+  if (!project) {
+    return res.status(400).json({ error: "Project doesn't exist" });
+  }
+
+  return next();
+}
+
+// Global middleware to count number of requisitions
+server.use((req, res, next) => {
+  console.count('Requisition');
+  return next();
+});
+
+// Route to create new projects
 server.post('/projects', (req, res) => {
   const { id, title } = req.body;
-
   const newProject = {
     id,
     title,
@@ -26,52 +31,51 @@ server.post('/projects', (req, res) => {
   };
 
   projects.push(newProject);
+
   return res.json(projects);
-
 });
 
-
+// Route to list all projects
 server.get('/projects', (req, res) => {
-  res.json(projects);
+  return res.json(projects);
 });
 
-server.get('/projects/:id', (req, res) => {
+// Route to list project by id
+server.get('/projects/:id', checkIfProjectExists, (req, res) => {
   const { id } = req.params;
   const project = projects.filter((project) => project.id == id);
+
   res.json(project);
 });
 
-server.put('/projects/:id', (req, res) => {
+// Route to update project title
+server.put('/projects/:id', checkIfProjectExists, (req, res) => {
   const { id } = req.params;
   const { title } = req.body;
 
-  projects.map((project) => {
-    if (project.id == id) {
-      project.title = title;
-    }
-    return project;
-  });
+  const project = projects.find((project) => project.id == id);
+  project.title = title;
+
   res.json(projects);
 });
 
-server.delete('/projects/:id', (req, res) => {
+// Route to delete project by id
+server.delete('/projects/:id', checkIfProjectExists, (req, res) => {
   const { id } = req.params;
 
-  projects = projects.filter((project) => project.id != id);
+  projectIndex = projects.findIndex((project) => project.id == id);
+  projects.splice(projectIndex, 1);
 
   return res.json(projects);
 });
 
-server.post('/projects/:id/tasks', (req, res) => {
+// Route to add new tasks to a project by project id
+server.post('/projects/:id/tasks', checkIfProjectExists, (req, res) => {
   const { id } = req.params;
   const { title } = req.body;
 
-  projects.map((project) => {
-    if (project.id == id) {
-      project.tasks.push(title);
-    }
-    return project;
-  });
+  const project = projects.find((project) => project.id = id);
+  project.tasks.push(title);
 
   return res.json(projects);
 });
