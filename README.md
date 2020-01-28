@@ -41,7 +41,7 @@ This route add one new task to an existing project receiving the project id via 
 {"title": "A Taks Title"}
 ```
 
-### 2. Read (GET /projects)
+### 3. Read (GET /projects)
 This route lists all the projects in the database with its tasks, like in the exemple:
 
 ```json
@@ -59,7 +59,7 @@ This route lists all the projects in the database with its tasks, like in the ex
 ]
 ```
 
-### 3. Read (GET /projects/:id)
+### 4. Read (GET /projects/:id)
 This route lists a single project by id in the database with its tasks, like in the example:
 
 ```json  
@@ -70,15 +70,32 @@ This route lists a single project by id in the database with its tasks, like in 
 }
 ```
 
-### 4. Update (PUT /projects/:id)
+### 5. Update (PUT /projects/:id)
 This route receives an id as a route parameter and a title within the body of the request in json format:
 
 ```json
 {"title": "A Project Title"}
 ```
 
-### 5. Delete (DELETE /projects/:id)
+### 6. Delete (DELETE /projects/:id)
 This route receives the project id via route params and delete the correspondent project in database.
 
 
+## Implemented Middlewares
 
+### 1. Requisition Counter (Global)
+This global middleware sends an output on the console with the cumulative number of requests made to present time.
+
+### 2. Project Exist Verification (Local)
+This local middleware intercepts the requisition to verify if there are one project at least with the id informed. If has no one project, the middleware returns with a bad request code and a error message, like the example:
+
+```json
+{ "error": "Project doesn't exist" }
+```
+
+### 3. Empty Title Verification (Local)
+This local middleware intercepts the requisition to verify if the title field was informed. This verification can be applied to the route that create new projects and also the route that add new tasks to one project. In case of field title was not informed, middleware returns with a bad request code and a error message, like the example:
+
+```json
+{ "error": "Project doesn't exist" }
+```
