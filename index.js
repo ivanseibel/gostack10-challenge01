@@ -15,6 +15,16 @@ function checkIfProjectExists(req, res, next) {
   return next();
 }
 
+function checkEmptyTitle(req, res, next) {
+  const { title } = req.body;
+
+  if (!title) {
+    return res.status(400).json({ error: "Title is required" })
+  }
+
+  return next();
+}
+
 // Global middleware to count number of requisitions
 server.use((req, res, next) => {
   console.count('Requisition');
@@ -22,7 +32,7 @@ server.use((req, res, next) => {
 });
 
 // Route to create new projects
-server.post('/projects', (req, res) => {
+server.post('/projects', checkEmptyTitle, (req, res) => {
   const { id, title } = req.body;
   const newProject = {
     id,
@@ -70,7 +80,7 @@ server.delete('/projects/:id', checkIfProjectExists, (req, res) => {
 });
 
 // Route to add new tasks to a project by project id
-server.post('/projects/:id/tasks', checkIfProjectExists, (req, res) => {
+server.post('/projects/:id/tasks', checkIfProjectExists, checkEmptyTitle, (req, res) => {
   const { id } = req.params;
   const { title } = req.body;
 
