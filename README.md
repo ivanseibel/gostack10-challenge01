@@ -30,7 +30,7 @@
 
 
 # Description
-A simple RESTful API to manipulate an array of projects and its tasks using Express, simulating CRUD database operations.
+A simple RESTful API to manipulate an array of projects and its tasks using Node.js + Express, simulating CRUD database operations.
 
 ## Projects Database (non persistent)
 On this app, projects is only an array that will receive some json objetcs like the bellow:
